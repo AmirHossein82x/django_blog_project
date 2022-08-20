@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load crispy_forms_tags %}
 {% block page_title %}
     Post Detail
 {% endblock %}
@@ -11,34 +12,30 @@
                     <h1>{{ posts.title }}</h1>
                     <p class="small text-muted mt-2">By: {{ posts.author }}</p>
                     <p class="mt-2">{{ posts.text }}</p>
+                    {% if posts.author == user %}
                     <div>
                         <a href="{% url "post_update" posts.id %}" class="btn btn-sm btn-warning">Edit</a>
                         <a href="{% url "post delete" posts.id %}" class="btn btn-sm btn-danger">Delete</a>
                     </div>
-
+                    {% endif %}
                 </div>
 
                 <div class="card shadow my-3 p-5">
                     <h3>Comments:</h3>
-                    No comments yet! Be the first one.
+                    {% for comment in comments %}
+                    <div class="container">
+                    <h3>{{ comment.user.username }}</h3>
+                    <p>{{ comment.text }}</p>
+
+                    </div>
+                    {% endfor %}
                 </div>
 
                 <div class="card shadow my-3 p-5">
                     <h3>Add new comment:</h3>
                     <form method="POST">
-                        <div class="form-group py-2">
-                            <label class="py-1" for="author_name">Enter your name:</label>
-                            <input type="text" class="form-control" placeholder="e.g. John Doe" name="author_name">
-                        </div>
-                        <div class="form-group py-2">
-                            <label class="py-1" for="email">Your Email:</label>
-                            <input type="email" class="form-control" placeholder="example@gmail.com" name="email">
-                        </div>
-                        <div class="form-group py-2">
-                            <label class="py-1" for="comment_text">Comment text:</label>
-                            <textarea class="form-control" name="text" rows="3"
-                                      placeholder="Enter your comment text here..."></textarea>
-                        </div>
+                        {% csrf_token %}
+                        {{ comment_form|crispy }}
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
